@@ -3,23 +3,28 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class User extends Model
+class User extends Authenticatable
 {
-    protected $table = 'user';
+    use HasFactory, Notifiable;
+
+    protected $table = 'users';
     protected $primaryKey = 'id_user';
 
     protected $fillable = [
-        'nama',
+        'name',
         'email',
         'password',
         'status',
-        'id_role'
+        'role_idrole'
     ];
 
     public function role()
     {
-        return $this->belongsTo(Role::class, 'id_role', 'idrole');
+        return $this->belongsTo(Role::class, 'role_idrole', 'idrole');
     }
 
     public function registrations()
@@ -27,7 +32,7 @@ class User extends Model
         return $this->hasMany(Registration::class, 'waiting_list_user_id_user', 'id_user');
     }
 
-    public function waitingList()
+    public function waitingLists()
     {
         return $this->hasMany(WaitingList::class, 'user_id_user', 'id_user');
     }
