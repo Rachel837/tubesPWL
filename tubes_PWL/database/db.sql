@@ -11,7 +11,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema db_tiket
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `db_tiket` DEFAULT CHARACTER SET utf8mb4 ;
+CREATE SCHEMA IF NOT EXISTS `db_tiket` DEFAULT CHARACTER SET utf16 ;
 -- -----------------------------------------------------
 -- Schema db_tiket
 -- -----------------------------------------------------
@@ -42,7 +42,8 @@ CREATE TABLE IF NOT EXISTS `db_tiket`.`event` (
   `kategori` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`idevent`))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
 
 
 -- -----------------------------------------------------
@@ -59,15 +60,16 @@ CREATE TABLE IF NOT EXISTS `db_tiket`.`event_detail` (
   `deskripsi` TEXT NOT NULL,
   `event_idevent` INT(11) NOT NULL,
   PRIMARY KEY (`idevent_detail`),
-  UNIQUE INDEX `idevent_detail_UNIQUE` (`idevent_detail` ASC) ,
-  INDEX `fk_event_detail_event1_idx` (`event_idevent` ASC) ,
+  UNIQUE INDEX `idevent_detail_UNIQUE` (`idevent_detail` ASC),
+  INDEX `fk_event_detail_event1_idx` (`event_idevent` ASC),
   CONSTRAINT `fk_event_detail_event1`
     FOREIGN KEY (`event_idevent`)
     REFERENCES `db_tiket`.`event` (`idevent`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
 
 
 -- -----------------------------------------------------
@@ -83,15 +85,16 @@ CREATE TABLE IF NOT EXISTS `db_tiket`.`tiket` (
   `deskripsi` TEXT NULL DEFAULT NULL,
   `event_detail_idevent_detail` INT(11) NOT NULL,
   PRIMARY KEY (`idtiket`),
-  UNIQUE INDEX `idtiket_UNIQUE` (`idtiket` ASC) ,
-  INDEX `fk_tiket_event_detail1_idx` (`event_detail_idevent_detail` ASC) ,
+  UNIQUE INDEX `idtiket_UNIQUE` (`idtiket` ASC),
+  INDEX `fk_tiket_event_detail1_idx` (`event_detail_idevent_detail` ASC),
   CONSTRAINT `fk_tiket_event_detail1`
     FOREIGN KEY (`event_detail_idevent_detail`)
     REFERENCES `db_tiket`.`event_detail` (`idevent_detail`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
 
 
 -- -----------------------------------------------------
@@ -104,7 +107,8 @@ CREATE TABLE IF NOT EXISTS `db_tiket`.`role` (
   `nama_role` VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (`idrole`))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
 
 
 -- -----------------------------------------------------
@@ -124,8 +128,8 @@ CREATE TABLE IF NOT EXISTS `db_tiket`.`users` (
   `updated_at` TIMESTAMP NULL DEFAULT NULL,
   `role_idrole` INT(25) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `users_email_unique` (`email` ASC) ,
-  INDEX `fk_users_role_idx` (`role_idrole` ASC) ,
+  UNIQUE INDEX `users_email_unique` (`email` ASC),
+  INDEX `fk_users_role_idx` (`role_idrole` ASC),
   CONSTRAINT `fk_users_role`
     FOREIGN KEY (`role_idrole`)
     REFERENCES `db_tiket`.`role` (`idrole`)
@@ -150,8 +154,8 @@ CREATE TABLE IF NOT EXISTS `db_tiket`.`waiting_list` (
   `event_idevent` INT(11) NOT NULL,
   `users_id` BIGINT(20) UNSIGNED NOT NULL,
   PRIMARY KEY (`idwaiting_list`, `users_id`),
-  INDEX `fk_waiting_list_event1_idx` (`event_idevent` ASC) ,
-  INDEX `fk_waiting_list_users1_idx` (`users_id` ASC) ,
+  INDEX `fk_waiting_list_event1_idx` (`event_idevent` ASC),
+  INDEX `fk_waiting_list_users1_idx` (`users_id` ASC),
   CONSTRAINT `fk_waiting_list_event1`
     FOREIGN KEY (`event_idevent`)
     REFERENCES `db_tiket`.`event` (`idevent`)
@@ -163,7 +167,8 @@ CREATE TABLE IF NOT EXISTS `db_tiket`.`waiting_list` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
 
 
 -- -----------------------------------------------------
@@ -180,9 +185,9 @@ CREATE TABLE IF NOT EXISTS `db_tiket`.`registrations` (
   `waiting_list_idwaiting_list` INT(11) NOT NULL,
   `tiket_idtiket` INT(11) NOT NULL,
   PRIMARY KEY (`idregistrations`),
-  UNIQUE INDEX `idregistrations_UNIQUE` (`idregistrations` ASC) ,
-  INDEX `fk_registrations_waiting_list1_idx` (`waiting_list_idwaiting_list` ASC) ,
-  INDEX `fk_registrations_tiket1_idx` (`tiket_idtiket` ASC) ,
+  UNIQUE INDEX `idregistrations_UNIQUE` (`idregistrations` ASC),
+  INDEX `fk_registrations_waiting_list1_idx` (`waiting_list_idwaiting_list` ASC),
+  INDEX `fk_registrations_tiket1_idx` (`tiket_idtiket` ASC),
   CONSTRAINT `fk_registrations_tiket1`
     FOREIGN KEY (`tiket_idtiket`)
     REFERENCES `db_tiket`.`tiket` (`idtiket`)
@@ -194,7 +199,8 @@ CREATE TABLE IF NOT EXISTS `db_tiket`.`registrations` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
 
 
 -- -----------------------------------------------------
@@ -206,14 +212,15 @@ CREATE TABLE IF NOT EXISTS `db_tiket`.`payment` (
   `idpayment` INT(11) NOT NULL AUTO_INCREMENT,
   `registrations_idregistrations` INT(11) NOT NULL,
   PRIMARY KEY (`idpayment`),
-  INDEX `fk_payment_registrations1_idx` (`registrations_idregistrations` ASC) ,
+  INDEX `fk_payment_registrations1_idx` (`registrations_idregistrations` ASC),
   CONSTRAINT `fk_payment_registrations1`
     FOREIGN KEY (`registrations_idregistrations`)
     REFERENCES `db_tiket`.`registrations` (`idregistrations`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
 
 USE `db_tiket` ;
 
@@ -227,7 +234,7 @@ CREATE TABLE IF NOT EXISTS `db_tiket`.`cache` (
   `value` MEDIUMTEXT NOT NULL,
   `expiration` INT(11) NOT NULL,
   PRIMARY KEY (`key`),
-  INDEX `cache_expiration_index` (`expiration` ASC) )
+  INDEX `cache_expiration_index` (`expiration` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci;
@@ -243,7 +250,7 @@ CREATE TABLE IF NOT EXISTS `db_tiket`.`cache_locks` (
   `owner` VARCHAR(255) NOT NULL,
   `expiration` INT(11) NOT NULL,
   PRIMARY KEY (`key`),
-  INDEX `cache_locks_expiration_index` (`expiration` ASC) )
+  INDEX `cache_locks_expiration_index` (`expiration` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci;
@@ -263,7 +270,7 @@ CREATE TABLE IF NOT EXISTS `db_tiket`.`failed_jobs` (
   `exception` LONGTEXT NOT NULL,
   `failed_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `failed_jobs_uuid_unique` (`uuid` ASC) )
+  UNIQUE INDEX `failed_jobs_uuid_unique` (`uuid` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci;
@@ -305,11 +312,26 @@ CREATE TABLE IF NOT EXISTS `db_tiket`.`jobs` (
   `available_at` INT(10) UNSIGNED NOT NULL,
   `created_at` INT(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `jobs_queue_index` (`queue` ASC) )
+  INDEX `jobs_queue_index` (`queue` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci;
 
+
+-- -----------------------------------------------------
+-- Table `db_tiket`.`db_tiketrations`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `db_tiket`.`db_tiketrations` ;
+
+CREATE TABLE IF NOT EXISTS `db_tiket`.`db_tiketrations` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `db_tiketration` VARCHAR(255) NOT NULL,
+  `batch` INT(11) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
 
 
 -- -----------------------------------------------------
@@ -340,8 +362,8 @@ CREATE TABLE IF NOT EXISTS `db_tiket`.`sessions` (
   `payload` LONGTEXT NOT NULL,
   `last_activity` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `sessions_user_id_index` (`user_id` ASC) ,
-  INDEX `sessions_last_activity_index` (`last_activity` ASC) )
+  INDEX `sessions_user_id_index` (`user_id` ASC),
+  INDEX `sessions_last_activity_index` (`last_activity` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci;

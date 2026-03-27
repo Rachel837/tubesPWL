@@ -14,25 +14,10 @@ class Event extends Model
         'date_start',
         'date_end',
         'location',
-        'max_participan',
+        'max_participant',
         'status',
-        'koordinator',
+        'koordinat',
         'deskripsi',
         'kategori'
     ];
-
-    public function details()
-    {
-        return $this->hasMany(EventDetail::class, 'event_idevent', 'idevent');
-    }
-
-    public function registrations()
-    {
-        return $this->hasMany(Registration::class, 'event_idevent', 'idevent');
-    }
-
-    public function waitingList()
-    {
-        return $this->hasMany(WaitingList::class, 'event_idevent', 'idevent');
-    }
 }

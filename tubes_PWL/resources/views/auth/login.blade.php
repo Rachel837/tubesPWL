@@ -1,11 +1,12 @@
-<x-guest-layout>
+@extends('layouts.master')
+@section('content')
     <div class="text-center mb-4 text-light">
         <h2 class="h4 fw-bold">Selamat Datang Kembali</h2>
         <p class="text-white-50">Silakan login untuk melanjutkan ke dashboard.</p>
     </div>
 
     <!-- Session Status -->
-    <x-auth-session-status class="alert alert-info" :status="session('status')" />
+
 
     <form method="POST" action="{{ route('login') }}" class="px-3 pb-3">
         @csrf
@@ -39,4 +40,4 @@
             Belum punya akun? <a href="{{ route('register') }}">Daftar sekarang</a>
         </div>
     </form>
-</x-guest-layout>
+    @endsection
