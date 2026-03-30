@@ -9,8 +9,8 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-     return view('dashboard');      
-    // return view('layouts.master');
+    //  return view('dashboard');      
+    return view('layouts.master');
     
 })->name('dashboard');
 
