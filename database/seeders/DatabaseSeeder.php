@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'role_idrole' => 3, // Assuming 'admin' role has id 1
         ]);
     }
 }

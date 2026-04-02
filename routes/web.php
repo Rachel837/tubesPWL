@@ -5,12 +5,16 @@ use App\Http\Controllers\EventController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('layouts.master');
+});
+
+Route::get('/login', function () {
+    return view('auth.login');
 });
 
 Route::get('/dashboard', function () {
-    //  return view('dashboard');      
-    return view('layouts.master');
+     return view('dashboard');      
+    // return view('layouts.master');
     
 })->name('dashboard');
 
