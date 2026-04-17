@@ -9,12 +9,15 @@ class Payment extends Model
     protected $table = 'payment';
     protected $primaryKey = 'idpayment';
 
+    public $timestamps = false;
+
     protected $fillable = [
-        'registrations_idregistrations'
+        'registrations_idregistrations',
+        'payment_proof'
     ];
 
     public function registration()
     {
-        return $this->belongsTo(Registration::class, 'registrations_idregistrations', 'idregistrations');
+        return $this->belongsTo(Registration::class, 'registrations_idregistrations');
     }
 }

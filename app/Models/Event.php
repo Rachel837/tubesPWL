@@ -16,8 +16,24 @@ class Event extends Model
         'location',
         'max_participant',
         'status',
-        'koordinat',
+        'koordinator',
         'deskripsi',
-        'kategori'
+        'kategori_id',
+        'banner'
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'kategori_id');
+    }
+
+    public function eventDetails()
+    {
+        return $this->hasMany(EventDetail::class, 'event_idevent');
+    }
+
+    public function waitingLists()
+    {
+        return $this->hasMany(WaitingList::class, 'event_idevent');
+    }
 }

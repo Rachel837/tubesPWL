@@ -11,22 +11,18 @@ class WaitingList extends Model
 
     protected $fillable = [
         'status',
+        'event_idevent',
         'user_id_user',
-        'event_idevent'
+        'users_id'
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id_user', 'id_user');
-    }
 
     public function event()
     {
-        return $this->belongsTo(Event::class, 'event_idevent', 'idevent');
+        return $this->belongsTo(Event::class, 'event_idevent');
     }
 
     public function registrations()
     {
-        return $this->hasMany(Registration::class, 'waiting_list_idwaiting_list', 'idwaiting_list');
+        return $this->hasMany(Registration::class, 'waiting_list_idwaiting_list');
     }
 }

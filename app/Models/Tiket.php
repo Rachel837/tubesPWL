@@ -14,17 +14,16 @@ class Tiket extends Model
         'harga',
         'kuota',
         'deskripsi',
-        'event_detail_idevent_detail',
-        'event_detail_event_idevent'
+        'event_detail_idevent_detail'
     ];
 
     public function eventDetail()
     {
-        return $this->belongsTo(EventDetail::class, 'event_detail_idevent_detail', 'idevent_detail');
+        return $this->belongsTo(EventDetail::class, 'event_detail_idevent_detail');
     }
 
     public function registrations()
     {
-        return $this->hasMany(Registration::class, 'tiket_idtiket', 'idtiket');
+        return $this->hasMany(Registration::class, 'tiket_idtiket');
     }
 }

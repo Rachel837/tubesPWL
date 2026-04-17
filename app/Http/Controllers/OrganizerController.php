@@ -1,60 +1,109 @@
 <?php
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
+namespace App\Http\Controllers;
+
+use App\Models\Event;
+use App\Models\Registration;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class OrganizerController extends Controller
 {
-    public function index()
+    public function dashboard()
     {
-        $organizers = User::where('role_id', 2)->get(); // 2 = organizer
-        return view('organizer.index', compact('organizers'));
+        // General welcome overview, or maybe just pass same complete data as dashboard overview.
+        return view('organizer.dashboard');
     }
 
-    public function create()
+    public function statistics()
     {
-        return view('organizer.create');
+        $totalSales = Registration::whereIn('status', ['Berhasil', 'Digunakan'])->count();
+        return view('organizer.statistics', compact('totalSales'));
     }
 
-    public function store(Request $request)
+    public function graph()
     {
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'role_id' => 2,
-            'status' => 'active'
-        ]);
+        $chartData = Registration::whereIn('status', ['Berhasil', 'Digunakan'])
+                ->selectRaw('DATE(created_at) as date, count(*) as total')
+                ->groupBy('date')
+                ->orderBy('date', 'ASC')
+                ->take(7)
+                ->get();
+                
+        $labels = empty($chartData) ? [] : $chartData->pluck('date')->map(function($date) { return Carbon::parse($date)->format('d M'); })->toArray();
+        $data = empty($chartData) ? [] : $chartData->pluck('total')->toArray();
 
-        return redirect('/organizer');
+        // Default empty data if no transactions
+        if (empty($labels)) {
+            $labels = [Carbon::now()->format('d M')];
+            $data = [0];
+        }
+
+        return view('organizer.graph', compact('labels', 'data'));
     }
 
-    public function edit($id)
+    public function revenue()
     {
-        $organizer = User::find($id);
-        return view('organizer.edit', compact('organizer'));
+        $totalRevenue = Registration::whereIn('status', ['Berhasil', 'Digunakan'])
+            ->join('tiket', 'registrations.tiket_idtiket', '=', 'tiket.idtiket')
+            ->sum('tiket.harga');
+            
+        return view('organizer.revenue', compact('totalRevenue'));
     }
 
-    public function update(Request $request, $id)
+    public function performance()
     {
-        $organizer = User::find($id);
+        $events = Event::with(['eventDetails.tikets.registrations'])->get()->map(function($e) {
+            $totalTiket = $e->eventDetails->sum(function($ed) {
+                return $ed->tikets->sum('kuota') + $ed->tikets->sum(function($t) { return $t->registrations->count(); });
+            });
+            $terjual = $e->eventDetails->sum(function($ed) { 
+                return $ed->tikets->sum(function($t) { return $t->registrations->count(); }); 
+            });
+            $e->performance = $totalTiket > 0 ? round(($terjual / $totalTiket) * 100) : 0;
+            $e->terjual = $terjual;
+            return $e;
+        });
 
-        $organizer->update([
-            'name' => $request->name,
-            'email' => $request->email,
-        ]);
-
-        return redirect('/organizer');
+        return view('organizer.performance', compact('events'));
     }
-
-    public function toggleStatus($id)
+    
+    public function export()
     {
-        $user = User::find($id);
+        $fileName = 'laporan_penjualan_'.date('YmdHis').'.csv';
+        $headers = array(
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        );
+        $events = Event::with(['eventDetails.tikets.registrations'])->get();
 
-        $user->status = $user->status == 'active' ? 'inactive' : 'active';
-        $user->save();
+        $callback = function() use($events) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, array('ID Event', 'Nama Event', 'Tanggal', 'Total Tiket Terjual', 'Pendapatan (Rp)', 'Performa (%)'));
 
-        return back();
+            foreach ($events as $e) {
+                $totalTiket = $e->eventDetails->sum(function($ed) {
+                    return $ed->tikets->sum('kuota') + $ed->tikets->sum(function($t) { return $t->registrations->count(); });
+                });
+                $terjual = $e->eventDetails->sum(function($ed) { 
+                    return $ed->tikets->sum(function($t) { return $t->registrations->count(); }); 
+                });
+                $pendapatan = $e->eventDetails->sum(function($ed) { 
+                    return $ed->tikets->sum(function($t) { 
+                        return $t->registrations->whereIn('status', ['Berhasil', 'Digunakan'])->count() * $t->harga; 
+                    }); 
+                });
+                
+                $perf = $totalTiket > 0 ? round(($terjual / $totalTiket) * 100) : 0;
+                
+                fputcsv($file, array($e->idevent, $e->nama_event, $e->date_start, $terjual, $pendapatan, $perf));
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

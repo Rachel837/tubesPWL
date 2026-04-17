@@ -11,7 +11,7 @@ class EventDetail extends Model
 
     protected $fillable = [
         'date',
-        'seri',
+        'sesi',
         'time_start',
         'time_end',
         'deskripsi',
@@ -20,11 +20,11 @@ class EventDetail extends Model
 
     public function event()
     {
-        return $this->belongsTo(Event::class, 'event_idevent', 'idevent');
+        return $this->belongsTo(Event::class, 'event_idevent');
     }
 
-    public function tickets()
+    public function tikets()
     {
-        return $this->hasMany(Tiket::class, 'event_detail_idevent_detail', 'idevent_detail');
+        return $this->hasMany(Tiket::class, 'event_detail_idevent_detail');
     }
 }

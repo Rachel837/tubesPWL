@@ -12,18 +12,30 @@ class Registration extends Model
     protected $fillable = [
         'status',
         'qr_code',
-        'tiket_idtiket',
         'waiting_list_idwaiting_list',
-        'waiting_list_user_id_user'
+        'tiket_idtiket',
+        'user_id',
+        'is_attended',
+        'attended_at'
     ];
+
+    public function waitingList()
+    {
+        return $this->belongsTo(WaitingList::class, 'waiting_list_idwaiting_list');
+    }
 
     public function tiket()
     {
-        return $this->belongsTo(Tiket::class, 'tiket_idtiket', 'idtiket');
+        return $this->belongsTo(Tiket::class, 'tiket_idtiket');
     }
 
     public function payment()
     {
-        return $this->hasOne(Payment::class, 'registrations_idregistrations', 'idregistrations');
+        return $this->hasOne(Payment::class, 'registrations_idregistrations');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

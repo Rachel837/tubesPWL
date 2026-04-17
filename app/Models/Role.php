@@ -8,14 +8,11 @@ class Role extends Model
 {
     protected $table = 'role';
     protected $primaryKey = 'idrole';
+
     public $timestamps = false;
 
     protected $fillable = [
+        'idrole',
         'nama_role'
     ];
-
-    public function users()
-    {
-        return $this->hasMany(User::class, 'id_role', 'idrole');
-    }
 }
