@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Organizer - @yield('title')</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            min-height: 100vh;
+            background-color: #2c3e50;
+            color: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        .sidebar a {
+            color: #bdc3c7;
+            text-decoration: none;
+            padding: 12px 20px;
+            display: block;
+            transition: all 0.3s;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #34495e;
+            color: white;
+        }
+        .sidebar .nav-icon {
+            margin-right: 10px;
+        }
+        .main-content {
+            padding: 30px;
+            min-height: 100vh;
+        }
+        .top-navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 15px 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+    </style>
+    @stack('styles')
+</head>
+<body>
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar d-none d-md-block">
+                <div class="p-4 mb-3 text-center border-bottom border-light">
+                    <h4 class="mb-0 text-white fw-bold">Organizer</h4>
+                </div>
+                <nav class="nav flex-column">
+                    <a href="{{ route('organizer.dashboard') }}" class="nav-link {{ request()->routeIs('organizer.dashboard') ? 'active' : '' }}">
+                        <i class="bi bi-speedometer2 nav-icon"></i> Beranda
+                    </a>
+                    <a href="{{ route('organizer.events.index') }}" class="nav-link {{ request()->routeIs('organizer.events.*') ? 'active' : '' }}">
+                        <i class="bi bi-calendar-event nav-icon"></i> Acara
+                    </a>
+                    <a href="{{ route('organizer.registrations.index') }}" class="nav-link {{ request()->routeIs('organizer.registrations.*') ? 'active' : '' }}">
+                        <i class="bi bi-people nav-icon"></i> Registrasi
+                    </a>
+                    <a href="{{ route('organizer.scanner.index') }}" class="nav-link {{ request()->routeIs('organizer.scanner.*') ? 'active' : '' }}">
+                        <i class="bi bi-qr-code-scan nav-icon"></i> Scan Tiket
+                    </a>
+                    <a href="{{ route('organizer.graph') }}" class="nav-link {{ request()->routeIs('organizer.graph') ? 'active' : '' }}">
+                        <i class="bi bi-graph-up nav-icon"></i> Grafik
+                    </a>
+                    <a href="{{ route('organizer.performance') }}" class="nav-link {{ request()->routeIs('organizer.performance') ? 'active' : '' }}">
+                        <i class="bi bi-star nav-icon"></i> Performa
+                    </a>
+                    <a href="{{ route('organizer.revenue') }}" class="nav-link {{ request()->routeIs('organizer.revenue') ? 'active' : '' }}">
+                        <i class="bi bi-wallet2 nav-icon"></i> Pendapatan
+                    </a>
+                    <a href="{{ route('organizer.statistics') }}" class="nav-link {{ request()->routeIs('organizer.statistics') ? 'active' : '' }}">
+                        <i class="bi bi-bar-chart nav-icon"></i> Statistik
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10">
+                <div class="main-content">
+                    <div class="top-navbar d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="mb-0 text-dark fw-bold">@yield('title')</h4>
+                        <div>
+                            <span class="text-muted d-none d-md-inline-block">Halo, Organizer</span>
+                            <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-danger btn-sm ms-3">
+                                    <i class="bi bi-box-arrow-right"></i> Keluar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @yield('content')
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @stack('scripts')
+</body>
+</html>
